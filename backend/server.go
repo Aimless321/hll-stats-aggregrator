@@ -75,7 +75,7 @@ func main() {
 	app.Get("/logout", handlers.Logout)
 	app.Get("/stats/:steamid", middleware.RequireValidSession, handlers.GetData)
 
-	if err := app.Listen(":3000"); err != nil {
+	if err := app.Listen(":8080"); err != nil {
 		log.Panic(err)
 	}
 }
