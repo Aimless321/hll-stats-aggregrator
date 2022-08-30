@@ -65,7 +65,7 @@ func main() {
 		discord.New(
 			config.String("clientId"),
 			config.String("clientSecret"),
-			"http://localhost:3000/auth/discord/callback",
+			config.String("discordCallback"),
 			discord.ScopeIdentify,
 		),
 	)
