@@ -10,6 +10,15 @@ import (
 	"log"
 )
 
+func contains(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
+}
+
 func DiscordCallback(ctx *fiber.Ctx) error {
 	user, err := goth_fiber.CompleteUserAuth(ctx)
 	if err != nil {
@@ -35,7 +44,7 @@ func DiscordCallback(ctx *fiber.Ctx) error {
 
 	if sess, err := models.Store.Get(ctx); err == nil {
 		defer sess.Save()
-		if t.Id != "261159108177166357" {
+		if !contains(config.Strings("allowedDiscordIds"), t.Id) {
 			return ctx.SendStatus(401)
 		}
 		sess.Set("username", t.Username)
