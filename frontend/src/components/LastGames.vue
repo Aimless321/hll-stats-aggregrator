@@ -1,4 +1,5 @@
 <script setup>
+import {ArrowTopRightOnSquareIcon} from '@heroicons/vue/20/solid'
 import {toRef} from "vue";
 
 const props = defineProps(['games']);
@@ -52,6 +53,13 @@ function getAllWeapons(game) {
               {{ weapon[0] }}: {{ weapon[1] }}
             </li>
           </ol>
+        </td>
+        <td>
+          <a :href="`https://rcon.aimless.eu/#/gamescoreboard/${game.gameId}`" target="_blank"
+             class="text-blue-500 flex items-center gap-1">
+            Full stats
+            <ArrowTopRightOnSquareIcon class="w-4 h-4"/>
+          </a>
         </td>
       </tr>
       </tbody>

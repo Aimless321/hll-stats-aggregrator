@@ -68,6 +68,7 @@ func GetData(ctx *fiber.Ctx) error {
 func getLast30Games(steamid string, servers []int) ([]models.GameStats, error) {
 	rows, _ := models.DbPool.Query(context.Background(),
 		"select mh.creation_time as date,"+
+			"       player_stats.map_id,"+
 			"       kills,"+
 			"       kills_streak,"+
 			"       deaths,"+

@@ -22,28 +22,29 @@ type DiscordUserResponse struct {
 }
 
 type AvgStats struct {
-	Kills           float64 `db:"kills" json:"kills,omitempty"`
-	Deaths          float64 `db:"deaths" json:"deaths,omitempty"`
-	KillsPerMinute  float64 `db:"kills_per_minute" json:"killsPerMinute,omitempty"`
-	DeathsPerMinute float64 `db:"deaths_per_minute" json:"deathsPerMinute,omitempty"`
-	KDRatio         float64 `db:"kill_death_ratio" json:"KDRatio,omitempty"`
+	Kills           float64 `db:"kills" json:"kills"`
+	Deaths          float64 `db:"deaths" json:"deaths"`
+	KillsPerMinute  float64 `db:"kills_per_minute" json:"killsPerMinute"`
+	DeathsPerMinute float64 `db:"deaths_per_minute" json:"deathsPerMinute"`
+	KDRatio         float64 `db:"kill_death_ratio" json:"KDRatio"`
 }
 
 type GameStats struct {
-	Date                time.Time      `db:"date" json:"date,omitempty"`
-	Kills               int            `db:"kills" json:"kills,omitempty"`
-	KillStreak          int            `db:"kills_streak" json:"killStreak,omitempty"`
-	Deaths              int            `db:"deaths" json:"deaths,omitempty"`
-	DeathStreak         int            `db:"deaths_without_kill_streak" json:"deathStreak,omitempty"`
-	GameLength          int            `db:"time_seconds" json:"gameLength,omitempty"`
-	KillsPerMinute      float64        `db:"kills_per_minute" json:"killsPerMinute,omitempty"`
-	DeathsPerMinute     float64        `db:"deaths_per_minute" json:"deathsPerMinute,omitempty"`
-	KDRatio             float64        `db:"kill_death_ratio" json:"KDRatio,omitempty"`
-	LongestLifeSeconds  int            `db:"longest_life_secs" json:"longestLifeSeconds,omitempty"`
-	ShortestLifeSeconds int            `db:"shortest_life_secs" json:"shortestLifeSeconds,omitempty"`
+	Date                time.Time      `db:"date" json:"date"`
+	GameId              int            `db:"map_id" json:"gameId"`
+	Kills               int            `db:"kills" json:"kills"`
+	KillStreak          int            `db:"kills_streak" json:"killStreak"`
+	Deaths              int            `db:"deaths" json:"deaths"`
+	DeathStreak         int            `db:"deaths_without_kill_streak" json:"deathStreak"`
+	GameLength          int            `db:"time_seconds" json:"gameLength"`
+	KillsPerMinute      float64        `db:"kills_per_minute" json:"killsPerMinute"`
+	DeathsPerMinute     float64        `db:"deaths_per_minute" json:"deathsPerMinute"`
+	KDRatio             float64        `db:"kill_death_ratio" json:"KDRatio"`
+	LongestLifeSeconds  int            `db:"longest_life_secs" json:"longestLifeSeconds"`
+	ShortestLifeSeconds int            `db:"shortest_life_secs" json:"shortestLifeSeconds"`
 	Weapons             map[string]int `db:"weapons" json:"weapons,omitempty"`
-	MapName             string         `db:"map_name" json:"mapName,omitempty"`
-	ServerNumber        int            `db:"server_number" json:"serverNumber,omitempty"`
+	MapName             string         `db:"map_name" json:"mapName"`
+	ServerNumber        int            `db:"server_number" json:"serverNumber"`
 }
 
 type PlayerStats struct {
