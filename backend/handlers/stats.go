@@ -26,6 +26,46 @@ func GetData(ctx *fiber.Ctx) error {
 		log.Panic("Cannot get steam info")
 	}
 
+	publicStats, err := getLast30Games(ctx.Params("steamid"), []int{1, 2})
+	if err != nil {
+		switch err {
+		case pgx.ErrNoRows:
+			return ctx.SendStatus(404)
+		default:
+			log.Panic(err)
+		}
+	}
+
+	compStats, err := getLast30Games(ctx.Params("steamid"), []int{3})
+	if err != nil {
+		switch err {
+		case pgx.ErrNoRows:
+			return ctx.SendStatus(404)
+		default:
+			log.Panic(err)
+		}
+	}
+
+	avgPublicStats, err := getAvgStats(ctx.Params("steamid"), []int{1, 2})
+	if err != nil {
+		log.Panic(err)
+	}
+
+	avgCompStats, err := getAvgStats(ctx.Params("steamid"), []int{3})
+	if err != nil {
+		log.Panic(err)
+	}
+
+	return ctx.Status(200).JSON(models.PlayerStats{
+		SteamInfo:       playerSummaries[0],
+		PublicAvg:       avgPublicStats,
+		CompAvg:         avgCompStats,
+		LastPublicGames: publicStats,
+		LastCompGames:   compStats,
+	})
+}
+
+func getLast30Games(steamid string, servers []int) ([]models.GameStats, error) {
 	rows, _ := models.DbPool.Query(context.Background(),
 		"select mh.creation_time as date,"+
 			"       kills,"+
@@ -48,22 +88,20 @@ func GetData(ctx *fiber.Ctx) error {
 			"               from player_stats "+
 			"               group by player_stats.map_id) as player_count on player_count.map_id = player_stats.map_id "+
 			"where s.steam_id_64 = $1"+
+			"  and server_number = any ($2) "+
 			"  and kills > 0 "+
 			"  and player_count > 80 "+
 			"order by mh.creation_time desc "+
-			"limit 30", ctx.Params("steamid"))
+			"limit 30", steamid, servers)
 
 	var stats []models.GameStats
-	if err := pgxscan.NewScanner(rows).Scan(&stats); err != nil {
-		switch err {
-		case pgx.ErrNoRows:
-			return ctx.SendStatus(404)
-		default:
-			log.Panic(err)
-		}
-	}
+	err := pgxscan.NewScanner(rows).Scan(&stats)
 
-	rows, _ = models.DbPool.Query(context.Background(),
+	return stats, err
+}
+
+func getAvgStats(steamid string, servers []int) (models.AvgStats, error) {
+	rows, _ := models.DbPool.Query(context.Background(),
 		"select avg(stats.kills)             as kills, "+
 			"       avg(stats.deaths)            as deaths, "+
 			"       avg(stats.kills_per_minute)  as kills_per_minute, "+
@@ -81,18 +119,13 @@ func GetData(ctx *fiber.Ctx) error {
 			"                     from player_stats "+
 			"                     group by player_stats.map_id) as player_count on player_count.map_id = player_stats.map_id "+
 			"      where s.steam_id_64 = $1 "+
+			"        and server_number = any ($2) "+
 			"        and kills > 0 "+
 			"        and player_count > 80"+
 			"      order by mh.creation_time desc "+
-			"      limit 30) stats;", ctx.Params("steamid"))
+			"      limit 30) stats;", steamid, servers)
 	var avgStats models.AvgStats
-	if err := pgxscan.NewScanner(rows).Scan(&avgStats); err != nil {
-		log.Panic(err)
-	}
+	err := pgxscan.NewScanner(rows).Scan(&avgStats)
 
-	return ctx.Status(200).JSON(models.PlayerStats{
-		SteamInfo: playerSummaries[0],
-		Avg:       avgStats,
-		LastGames: stats,
-	})
+	return avgStats, err
 }

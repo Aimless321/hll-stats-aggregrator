@@ -14,7 +14,13 @@ const query = ref("");
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 const steamId = route.params.steamId;
 const statsUrl = `${apiUrl}/stats/${steamId}`;
-const stats = reactive({steamInfo: null, avg: null, lastGames: null});
+const stats = reactive({
+  steamInfo: null,
+  publicAvg: null,
+  compAvg: null,
+  publicGames: null,
+  compGames: null
+});
 
 fetch(statsUrl, {credentials: "include"})
     .then((resp) => {
@@ -36,9 +42,7 @@ fetch(statsUrl, {credentials: "include"})
       newRecent.unshift({steamId, name});
       localStorage.setItem('recentSearches', JSON.stringify(newRecent.slice(0, 6)));
 
-      stats.steamInfo = data.steamInfo;
-      stats.avg = data.avg;
-      stats.lastGames = data.lastGames;
+      Object.assign(stats, data);
     })
     .catch((error) => {
       console.error('Error:', error);
@@ -73,17 +77,17 @@ fetch(statsUrl, {credentials: "include"})
     <h2 class="text-xl tracking-tight text-gray-900 sm:text-3xl py-4 sm:py-6 lg:py-8">
       Averages over last 30 games
     </h2>
-    <AvgStats :avg="stats.avg"/>
+    <AvgStats :public-avg="stats.publicAvg" :comp-avg="stats.compAvg"/>
 
     <h2 class="text-xl tracking-tight text-gray-900 sm:text-3xl py-4 sm:py-6 lg:py-8">
       Last 30 comp games
     </h2>
-    <LastGames :games="stats?.lastGames?.filter(game => game.serverNumber === 3)"/>
+    <LastGames :games="stats?.compGames"/>
 
     <h2 class="text-xl tracking-tight text-gray-900 sm:text-3xl py-4 sm:py-6 lg:py-8">
       Last 30 public games
     </h2>
-    <LastGames :games="stats?.lastGames?.filter(game => game.serverNumber < 3)"/>
+    <LastGames :games="stats?.publicGames"/>
   </div>
   <EmptyStats v-else :error="true"/>
 </template>

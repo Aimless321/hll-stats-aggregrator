@@ -47,9 +47,11 @@ type GameStats struct {
 }
 
 type PlayerStats struct {
-	SteamInfo steamapi.PlayerSummary `json:"steamInfo"`
-	Avg       AvgStats               `json:"avg" json:"avg"`
-	LastGames []GameStats            `json:"lastGames,omitempty" json:"lastGames,omitempty"`
+	SteamInfo       steamapi.PlayerSummary `json:"steamInfo"`
+	PublicAvg       AvgStats               `json:"publicAvg"`
+	CompAvg         AvgStats               `json:"compAvg"`
+	LastPublicGames []GameStats            `json:"publicGames,omitempty"`
+	LastCompGames   []GameStats            `json:"compGames,omitempty"`
 }
 
 var Store *session.Store
