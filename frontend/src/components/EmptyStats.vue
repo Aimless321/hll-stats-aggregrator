@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-auto max-w-md sm:max-w-3xl h-screen grid place-content-center">
+  <div class="mx-auto max-w-md sm:max-w-3xl min-h-screen grid place-content-center">
     <div>
       <div class="text-center">
         <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 48 48"
@@ -46,13 +46,41 @@
         </li>
       </ul>
     </div>
+    <div class="mt-10 grid grid-cols-2 gap-3">
+      <HighKillGames :data="stats.highKillGames" />
+      <HighKPMPlayers :data="stats.highKPMGamers" />
+    </div>
   </div>
 </template>
 
 <script setup>
 import {ChevronRightIcon} from '@heroicons/vue/20/solid'
-import {ref} from "vue";
+import {ref, reactive} from "vue";
 import {useRouter} from "vue-router";
+import HighKillGames from "./HighKillGames.vue";
+import HighKPMPlayers from "./HighKPMPlayers.vue";
+
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
+const recruitmentUrl = `${apiUrl}/stats/recruitment`;
+const stats = reactive({
+  highKillGames: null,
+  highKPMGamers: null,
+});
+
+fetch(recruitmentUrl, {credentials: "include"})
+    .then((resp) => {
+      if (resp.status === 200) {
+        return resp.json()
+      }
+
+      throw new Error('Something went wrong');
+    })
+    .then(data => {
+      Object.assign(stats, data);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
 
 const props = defineProps({
   error: {

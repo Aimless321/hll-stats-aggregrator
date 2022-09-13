@@ -40,7 +40,7 @@ func GetData(ctx *fiber.Ctx) error {
 	if err != nil {
 		switch err {
 		case pgx.ErrNoRows:
-			return ctx.SendStatus(404)
+			break
 		default:
 			log.Panic(err)
 		}
@@ -52,9 +52,6 @@ func GetData(ctx *fiber.Ctx) error {
 	}
 
 	avgCompStats, err := getAvgStats(ctx.Params("steamid"), []int{3})
-	if err != nil {
-		log.Panic(err)
-	}
 
 	return ctx.Status(200).JSON(models.PlayerStats{
 		SteamInfo:       playerSummaries[0],

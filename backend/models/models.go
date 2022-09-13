@@ -55,5 +55,21 @@ type PlayerStats struct {
 	LastCompGames   []GameStats            `json:"compGames,omitempty"`
 }
 
+type KPMStats struct {
+	SteamID         string  `db:"steam_id_64" json:"steamId"`
+	Name            string  `db:"used_name" json:"name"`
+	Kills           float64 `db:"kills" json:"kills"`
+	Deaths          float64 `db:"deaths" json:"deaths"`
+	KillsPerMinute  float64 `db:"kills_per_minute" json:"killsPerMinute"`
+	DeathsPerMinute float64 `db:"deaths_per_minute" json:"deathsPerMinute"`
+	KDRatio         float64 `db:"kill_death_ratio" json:"KDRatio"`
+}
+
+type HighKillData struct {
+	SteamID string `db:"steam_id_64" json:"steamId"`
+	Name    string `db:"used_name" json:"name"`
+	Kills   int    `db:"max_kill_game" json:"kills"`
+}
+
 var Store *session.Store
 var DbPool *pgxpool.Pool

@@ -73,6 +73,7 @@ func main() {
 	app.Get("/auth/:provider", goth_fiber.BeginAuthHandler)
 	app.Get("/auth/:provider/callback", handlers.DiscordCallback)
 	app.Get("/logout", handlers.Logout)
+	app.Get("/stats/recruitment", middleware.RequireValidSession, handlers.GetRecruitmentData)
 	app.Get("/stats/:steamid", middleware.RequireValidSession, handlers.GetData)
 
 	if err := app.Listen(":8080"); err != nil {

@@ -3,3 +3,5 @@ docker-compose.yml
 
 config.json
 fiber.sqlite3
+
+*.bak
