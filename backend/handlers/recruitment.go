@@ -44,7 +44,7 @@ func getHighKPMPlayers() ([]models.KPMStats, error) {
 			"having count(steam_id_64) > 5 "+
 			"   and MODE() within group ( order by name ) !~ '^(\\[DC\\*?]|◯ ).*$' "+
 			"order by kills_per_minute desc "+
-			"limit 30;")
+			"limit 50;")
 
 	var kpmStats []models.KPMStats
 	err := pgxscan.NewScanner(rows).Scan(&kpmStats)
@@ -67,7 +67,8 @@ func getHighKillGames() ([]models.HighKillData, error) {
 			"  and player_count > 80"+
 			"  and mh.creation_time > current_date - interval '7 days' "+
 			"group by steam_id_64 "+
-			"order by max_kill_game DESC;")
+			"order by max_kill_game desc "+
+			"limit 100;")
 
 	var gameData []models.HighKillData
 	err := pgxscan.NewScanner(rows).Scan(&gameData)
