@@ -5,6 +5,7 @@ import {MagnifyingGlassIcon} from '@heroicons/vue/20/solid'
 import AvgStats from "../components/AvgStats.vue";
 import LastGames from "../components/LastGames.vue";
 import EmptyStats from "../components/EmptyStats.vue";
+import {useTitle} from "vue-page-title";
 
 const router = useRouter();
 const route = useRoute();
@@ -21,6 +22,8 @@ const stats = reactive({
   publicGames: null,
   compGames: null
 });
+const titleRef = ref("")
+const { title } = useTitle(titleRef)
 
 fetch(statsUrl, {credentials: "include"})
     .then((resp) => {
@@ -41,6 +44,8 @@ fetch(statsUrl, {credentials: "include"})
       const newRecent = recent.filter(query => query.steamId !== steamId);
       newRecent.unshift({steamId, name});
       localStorage.setItem('recentSearches', JSON.stringify(newRecent.slice(0, 6)));
+
+      titleRef.value = data.steamInfo.PersonaName;
 
       Object.assign(stats, data);
     })

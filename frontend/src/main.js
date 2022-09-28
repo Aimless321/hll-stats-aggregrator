@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import {pageTitle} from "vue-page-title";
 import App from './App.vue'
 import router from './router'
 
@@ -18,5 +19,8 @@ if (urlParams.has('username')) {
 
 app.use(pinia)
 app.use(router)
+app.use(pageTitle({
+    suffix: '- The Circle Stats',
+}));
 
 app.mount('#app')
