@@ -60,6 +60,7 @@ import {useRouter} from "vue-router";
 import HighKillGames from "./HighKillGames.vue";
 import HighKPMPlayers from "./HighKPMPlayers.vue";
 
+const router = useRouter();
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
 const recruitmentUrl = `${apiUrl}/stats/recruitment`;
 const stats = reactive({
@@ -71,6 +72,12 @@ fetch(recruitmentUrl, {credentials: "include"})
     .then((resp) => {
       if (resp.status === 200) {
         return resp.json()
+      }
+
+      if (resp.status === 401) {
+        localStorage.clear();
+        router.replace('/');
+        return;
       }
 
       throw new Error('Something went wrong');
@@ -89,7 +96,6 @@ const props = defineProps({
   }
 });
 const query = ref("");
-const router = useRouter();
 
 const recent = JSON.parse(localStorage.getItem('recentSearches')) || [];
 

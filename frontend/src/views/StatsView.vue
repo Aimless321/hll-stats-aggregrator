@@ -31,6 +31,12 @@ fetch(statsUrl, {credentials: "include"})
         return resp.json()
       }
 
+      if (resp.status === 401) {
+        localStorage.clear();
+        router.replace('/');
+        return;
+      }
+
       if (resp.status === 404) {
         notFound.value = true;
       }
