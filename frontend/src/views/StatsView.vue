@@ -33,7 +33,7 @@ fetch(statsUrl, {credentials: "include"})
 
       if (resp.status === 401) {
         localStorage.clear();
-        router.replace('/');
+        router.go();
         return;
       }
 
