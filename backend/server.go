@@ -67,6 +67,7 @@ func main() {
 			config.String("clientSecret"),
 			config.String("discordCallback"),
 			discord.ScopeIdentify,
+			"guilds.members.read",
 		),
 	)
 
