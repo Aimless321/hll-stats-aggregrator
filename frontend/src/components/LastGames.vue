@@ -4,6 +4,7 @@ import {toRef} from "vue";
 
 const props = defineProps(['games']);
 const games = toRef(props, 'games');
+const rconUrl = import.meta.env.VITE_APP_RCON_URL;
 
 function getAllWeapons(game) {
   const weapons = Object.entries(game.weapons);
@@ -55,7 +56,7 @@ function getAllWeapons(game) {
           </ol>
         </td>
         <td>
-          <a :href="`https://rcon.aimless.eu/#/gamescoreboard/${game.gameId}`" target="_blank"
+          <a :href="`${rconUrl}/#/gamescoreboard/${game.gameId}`" target="_blank"
              class="text-blue-500 flex items-center gap-1">
             Full stats
             <ArrowTopRightOnSquareIcon class="w-4 h-4"/>
