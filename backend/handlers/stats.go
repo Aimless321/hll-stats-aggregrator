@@ -17,7 +17,7 @@ func GetData(ctx *fiber.Ctx) error {
 	steamId, err := strconv.ParseUint(ctx.Params("steamid"), 10, 64)
 	if err != nil {
 		log.Println("Invalid steamid", ctx.Params("steamid"))
-		ctx.SendStatus(400)
+		return ctx.SendStatus(400)
 	}
 
 	ids = append(ids, steamId)
@@ -36,7 +36,7 @@ func GetData(ctx *fiber.Ctx) error {
 		}
 	}
 
-	compStats, err := getLast30Games(ctx.Params("steamid"), []int{3})
+	compStats, err := getLast30Games(ctx.Params("steamid"), []int{3, 100})
 	if err != nil {
 		switch err {
 		case pgx.ErrNoRows:

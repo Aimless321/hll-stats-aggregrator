@@ -81,5 +81,105 @@ type HighKillData struct {
 	Kills   int    `db:"max_kill_game" json:"kills"`
 }
 
+type RconScoreboardResult struct {
+	Result RconScoreboard `json:"result"`
+	Failed bool
+}
+
+type RconScoreboard struct {
+	Id           int               `json:"id"`
+	PlayerStats  []RconPlayerStats `json:"player_stats"`
+	CreationTime MyTime            `json:"creation_time"`
+	Start        MyTime            `json:"start"`
+	End          MyTime            `json:"end"`
+	ServerNumber int               `json:"server_number"`
+	MapName      string            `json:"map_name"`
+}
+
+type RconPlayerStats struct {
+	Id             int            `json:"id,omitempty" db:"id"`
+	PlayerId       int            `json:"player_id,omitempty" db:"player_id"`
+	Player         string         `json:"player,omitempty" db:"player"`
+	SteamInfo      RconSteamInfo  `json:"steaminfo" db:"steaminfo"`
+	MapId          int            `json:"map_id,omitempty" db:"map_id"`
+	Kills          int            `json:"kills,omitempty" db:"kills"`
+	KillStreak     int            `json:"kills_streak,omitempty" db:"kills_streak"`
+	Deaths         int            `json:"deaths,omitempty" db:"deaths"`
+	DeathStreak    int            `json:"deaths_without_kill_streak,omitempty" db:"deaths_without_kill_streak"`
+	TeamKills      int            `json:"teamkills,omitempty" db:"teamkills"`
+	TeamKillStreak int            `json:"teamkills_streak,omitempty" db:"teamkills_streak"`
+	TKDeaths       int            `json:"deaths_by_tk,omitempty" db:"deaths_by_tk"`
+	TKDeathStreak  int            `json:"deaths_by_tk_streak,omitempty" db:"deaths_by_tk_streak"`
+	VoteStarted    int            `json:"nb_vote_started,omitempty" db:"nb_vote_started"`
+	VotedYes       int            `json:"nb_voted_yes,omitempty" db:"nb_voted_yes"`
+	VotedNo        int            `json:"nb_voted_no,omitempty" db:"nb_voted_no"`
+	TimeSeconds    int            `json:"time_seconds,omitempty" db:"time_seconds"`
+	KPM            float64        `json:"kills_per_minute,omitempty" db:"kills_per_minute"`
+	DPM            float64        `json:"deaths_per_minute,omitempty" db:"deaths_per_minute"`
+	KDRatio        float64        `json:"kill_death_ratio,omitempty" db:"kill_death_ratio"`
+	LongestLife    int            `json:"longest_life_secs,omitempty" db:"longest_life_secs"`
+	ShortestLife   int            `json:"shortest_life_secs,omitempty" db:"shortest_life_secs"`
+	MostKilled     map[string]int `json:"most_killed,omitempty" db:"most_killed"`
+	KilledBy       map[string]int `json:"death_by,omitempty" db:"death_by"`
+	Weapons        map[string]int `json:"weapons,omitempty" db:"weapons"`
+}
+
+type RconSteamInfo struct {
+	Id      int                    `json:"id,omitempty"`
+	Created MyTime                 `json:"created,omitempty"`
+	Updated MyTime                 `json:"updated,omitempty"`
+	Profile steamapi.PlayerSummary `json:"profile"`
+	Country string                 `json:"country,omitempty"`
+}
+
+type ExternalGame struct {
+	Id     int          `json:"id,omitempty"`
+	MapId  int          `json:"mapId,omitempty"`
+	Name   string       `json:"name,omitempty"`
+	URL    string       `json:"URL,omitempty"`
+	Date   time.Time    `json:"date"`
+	Squads []EventSquad `json:"squads"`
+}
+
+type EventSquad struct {
+	Name    string        `json:"name"`
+	Players []SquadPlayer `json:"players"`
+}
+
+type SquadPlayer struct {
+	SteamID string `json:"steamId"`
+}
+
+type ExternalStats struct {
+	SteamID string `json:"steamId" db:"steam_id"`
+	Name    string `json:"name"`
+	GameStats
+}
+
 var Store *session.Store
 var DbPool *pgxpool.Pool
+
+type MyTime struct {
+	time.Time
+}
+
+func (self *MyTime) UnmarshalJSON(b []byte) (err error) {
+	s := string(b)
+
+	if s == "null" {
+		return
+	}
+
+	// Get rid of the quotes "" around the value.
+	// A second option would be to include them
+	// in the date format string instead, like so below:
+	//   time.Parse(`"`+time.RFC3339Nano+`"`, s)
+	s = s[1 : len(s)-1]
+
+	t, err := time.Parse(time.RFC3339Nano, s)
+	if err != nil {
+		t, err = time.Parse("2006-01-02T15:04:05.999999999", s)
+	}
+	self.Time = t
+	return
+}

@@ -8,6 +8,7 @@ require (
 	github.com/gofiber/storage/sqlite3 v0.0.0-20220823163857-efffcc135b26
 	github.com/gookit/config/v2 v2.1.4
 	github.com/jackc/pgx/v4 v4.17.1
+	github.com/liamylian/jsontime/v2 v2.0.0
 	github.com/markbates/goth v1.73.0
 	github.com/randallmlough/pgxscan v0.3.0
 	github.com/shareed2k/goth_fiber v0.2.8

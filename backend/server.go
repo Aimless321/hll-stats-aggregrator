@@ -36,6 +36,8 @@ func main() {
 	}
 	defer models.DbPool.Close()
 
+	handlers.CreateTables()
+
 	storage := sqlite3.New()
 	models.Store = session.New(session.Config{
 		Storage:      storage,
@@ -76,6 +78,10 @@ func main() {
 	app.Get("/logout", handlers.Logout)
 	app.Get("/stats/recruitment", middleware.RequireValidSession, handlers.GetRecruitmentData)
 	app.Get("/stats/:steamid", middleware.RequireValidSession, handlers.GetData)
+	app.Get("/external", middleware.RequireValidSession, handlers.GetAllExternals)
+	app.Get("/external/:gameid", middleware.RequireValidSession, handlers.GetExternal)
+	app.Post("/external/import", middleware.RequireValidSession, handlers.ImportExternal)
+	app.Put("/external/:gameid", middleware.RequireValidSession, handlers.UpdateExternal)
 
 	if err := app.Listen(":8080"); err != nil {
 		log.Panic(err)

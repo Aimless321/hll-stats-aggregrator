@@ -42,8 +42,6 @@ func DiscordCallback(ctx *fiber.Ctx) error {
 	}
 	json.Unmarshal(body, &t)
 
-	fmt.Println(t.Roles)
-
 	if sess, err := models.Store.Get(ctx); err == nil {
 		defer sess.Save()
 		if !contains(t.Roles, config.String("requiredRole")) {
