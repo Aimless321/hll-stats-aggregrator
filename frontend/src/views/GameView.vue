@@ -1,7 +1,15 @@
 <template>
   <div v-if="data.game">
     <h1 class="text-xl text-gray-900 mb-6">{{ data.game.name }} - {{ data.game.date }}</h1>
-    <h2 class="mb-4">Squad composition</h2>
+    <div class="flex justify-between">
+      <h2 class="mb-4">Squad composition</h2>
+      <button type="button"
+              @click="splitClans"
+              class="inline-flex items-center rounded border border-transparent bg-indigo-600 px-2.5 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+        Split Clans
+      </button>
+    </div>
+
     <div class="grid grid-cols-6 gap-2.5 mb-4">
       <div
           class="squad-block"
@@ -29,6 +37,7 @@
           @dragleave="$event.preventDefault()"
           @drop="movePlayerTo($event, squad)"
       >
+        <XMarkIcon @click="removeSquad(squad)" class="cursor-pointer h-4 w-4 absolute top-0 right-0 m-2"/>
         <label class="block text-sm font-medium text-gray-700">{{ squad.name }}</label>
         <select :size="squad.players.length+1"
 
@@ -98,7 +107,8 @@
 </template>
 
 <script setup>
-import {reactive, ref, toRaw} from "vue";
+import {XMarkIcon} from '@heroicons/vue/20/solid'
+import {reactive, ref} from "vue";
 import {useRoute, useRouter} from "vue-router";
 
 const apiUrl = import.meta.env.VITE_API_BASE_URL;
@@ -151,6 +161,46 @@ fetch(statsUrl, {credentials: "include"})
       console.error('Error:', error);
     });
 
+function splitClans() {
+  const knownClans = {
+    'The Circle': ['◯ |', 'Ⓡ |'],
+    'GOF': ['//'],
+    'DC': ['[DC]', '[DC*]'],
+    'Phx': ['phx.', 'phx*.'],
+    '82AD': ['[82AD]', '[82ADr]'],
+    'ARC': ['[ARC]'],
+    '126': ['[126]'],
+    'Raptors': ['|||™'],
+    'HLL.PL': ['HLL.PL |'],
+    'StDb': ['[StDb]'],
+    'RED': ['[RED]'],
+    'TL': ['-TL-'],
+    'CoRe': ['CoRe |'],
+    'WTH': ['(WTH)', '[WTH]'],
+    '116': ['l|l™', '🅶 I|I'],
+    '501.ES': ['501.es |'],
+    'BC': ['[BC]', '[29SD]'],
+    'CM': ['CM |'],
+  }
+
+  for (const [clanName, tags] of Object.entries(knownClans)) {
+    const clanPlayers = data.players.filter(player => tags.some(tag => player.name.startsWith(tag)));
+
+    if (clanPlayers.length === 0) {
+      continue;
+    }
+
+    changesMade.value = true;
+
+    data.game.squads.push({
+      name: clanName,
+      players: clanPlayers,
+    });
+
+    data.players = data.players.filter(player => !clanPlayers.some(clanPlayer => clanPlayer.steamId === player.steamId))
+  }
+}
+
 function addSquad() {
   if (!name.value || name.value === "_game") {
     return;
@@ -187,6 +237,13 @@ function movePlayerTo(event, to) {
 
   to.players.push(player);
   to.players = to.players.sort((a, b) => a.kills < b.kills)
+}
+
+function removeSquad(deleteSquad) {
+  data.players.push(...deleteSquad.players);
+  data.players = data.players.sort((a, b) => a.kills < b.kills)
+
+  data.game.squads = data.game.squads.filter(squad => squad.name !== deleteSquad.name);
 }
 
 function saveSquads() {
