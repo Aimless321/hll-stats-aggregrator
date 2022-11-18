@@ -10,9 +10,9 @@
       </button>
     </div>
 
-    <div class="grid grid-cols-6 gap-2.5 mb-4">
+    <div class="grid grid-cols-6 auto-rows-auto gap-2.5 mb-4">
       <div
-          class="squad-block"
+          class="squad-block row-start-1 row-end-7 sticky top-32"
           @dragover="$event.preventDefault()"
           @dragenter="$event.preventDefault()"
           @dragleave="$event.preventDefault()"
@@ -31,7 +31,8 @@
 
       <div
           v-for="(squad, index) in data.game.squads" :key="index"
-          class="squad-block sticky top-32"
+          class="squad-block top-32"
+          :class="{'sticky': data.players.length > 50}"
           @dragover="$event.preventDefault()"
           @dragenter="$event.preventDefault()"
           @dragleave="$event.preventDefault()"
@@ -75,7 +76,7 @@
     </button>
 
     <h2 class="mb-4 mt-6">Stats</h2>
-    <div class="flex gap-2.5">
+    <div class="grid grid-cols-5 gap-2.5">
       <div
           v-for="(squad, index) in data.game.squads" :key="index"
           class="squad-block"
@@ -93,7 +94,7 @@
           </thead>
           <tbody class="divide-y divide-gray-200 bg-white">
           <tr v-for="player in squad.players" :key="player.steamId">
-            <td class="whitespace-nowrap pr-2 text-sm font-medium text-gray-900">{{ player.name }}</td>
+            <td class="whitespace-nowrap pr-2 text-sm font-medium text-gray-900 truncate">{{ player.name }}</td>
             <td class="whitespace-nowrap px-1 py-3 text-sm text-gray-500 text-center">{{ player.kills }}</td>
             <td class="whitespace-nowrap text-sm text-gray-500 text-center">{{ player.deaths }}</td>
             <td class="whitespace-nowrap text-sm text-gray-500 text-center">{{ player.KDRatio }}</td>
