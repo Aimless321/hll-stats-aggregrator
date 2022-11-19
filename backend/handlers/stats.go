@@ -51,7 +51,7 @@ func GetData(ctx *fiber.Ctx) error {
 		log.Panic(err)
 	}
 
-	avgCompStats, err := getAvgStats(ctx.Params("steamid"), []int{3})
+	avgCompStats, err := getAvgStats(ctx.Params("steamid"), []int{3, 100})
 
 	return ctx.Status(200).JSON(models.PlayerStats{
 		SteamInfo:       playerSummaries[0],
