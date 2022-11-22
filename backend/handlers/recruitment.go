@@ -42,9 +42,9 @@ func getHighKPMPlayers() ([]models.KPMStats, error) {
 			"  and mh.creation_time > current_date - interval '7 days' "+
 			"  and mh.server_number IN (1,2) "+
 			"group by steam_id_64 "+
-			"having count(steam_id_64) > 5 "+
-			"order by kills_per_minute desc "+
-			"limit 50;")
+			"having count(steam_id_64) > 5"+
+			"  and avg(kills_per_minute) > 0.4 "+
+			"order by kills_per_minute desc;")
 
 	var kpmStats []models.KPMStats
 	err := pgxscan.NewScanner(rows).Scan(&kpmStats)
