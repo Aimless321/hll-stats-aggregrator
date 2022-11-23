@@ -157,10 +157,13 @@ fetch(statsUrl, {credentials: "include"})
           };
 
           assignedPlayers.push(player.steamId);
-        })
+        });
+
+        squad.players = squad.players.sort((a, b) => a.kills < b.kills);
       });
 
-      data.players = data.players.filter(player => !assignedPlayers.includes(player.steamId))
+      data.players = data.players.filter(player => !assignedPlayers.includes(player.steamId));
+      data.players = data.players.sort((a, b) => a.kills < b.kills);
     })
     .catch((error) => {
       console.error('Error:', error);
@@ -197,12 +200,15 @@ function splitClans() {
 
     changesMade.value = true;
 
+    clanPlayers.sort((a, b) => a.kills < b.kills);
+
     data.game.squads.push({
       name: clanName,
       players: clanPlayers,
     });
 
-    data.players = data.players.filter(player => !clanPlayers.some(clanPlayer => clanPlayer.steamId === player.steamId))
+    data.players = data.players.filter(player => !clanPlayers.some(clanPlayer => clanPlayer.steamId === player.steamId));
+    data.players = data.players.sort((a, b) => a.kills < b.kills);
   }
 }
 
