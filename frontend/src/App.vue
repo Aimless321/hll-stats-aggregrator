@@ -11,7 +11,7 @@ const store = useStore();
   <div v-if="!store.loggedIn" class="grid place-content-center h-screen">
     <DiscordButton/>
   </div>
-  <div v-else>
+  <div v-else class="bg-gray-50">
     <Header/>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
       <div class="max-w-6xl mx-auto">

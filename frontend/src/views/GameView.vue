@@ -10,7 +10,7 @@
       </button>
     </div>
 
-    <div class="grid grid-cols-6 auto-rows-auto gap-2.5 mb-4">
+    <div class="flex gap-2.5 mb-4">
       <div
           class="squad-block row-start-1 row-end-7 sticky top-32"
           @dragover="$event.preventDefault()"
@@ -30,42 +30,46 @@
       </div>
 
       <div
-          v-for="(squad, index) in data.game.squads" :key="index"
-          class="squad-block top-32"
+          class="columns-4 w-full gap-2.5 top-32 h-fit"
           :class="{'sticky': data.players.length > 50}"
-          @dragover="$event.preventDefault()"
-          @dragenter="$event.preventDefault()"
-          @dragleave="$event.preventDefault()"
-          @drop="movePlayerTo($event, squad)"
       >
-        <XMarkIcon @click="removeSquad(squad)" class="cursor-pointer h-4 w-4 absolute top-0 right-0 m-2"/>
-        <label class="block text-sm font-medium text-gray-700">{{ squad.name }}</label>
-        <select :size="squad.players.length+1"
+        <div
+            v-for="(squad, index) in data.game.squads" :key="index"
+            class="squad-block relative"
+            @dragover="$event.preventDefault()"
+            @dragenter="$event.preventDefault()"
+            @dragleave="$event.preventDefault()"
+            @drop="movePlayerTo($event, squad)"
+        >
+          <XMarkIcon @click="removeSquad(squad)" class="cursor-pointer h-4 w-4 absolute top-0 right-0 m-2"/>
+          <label class="block text-sm font-medium text-gray-700">{{ squad.name }}</label>
+          <select :size="squad.players.length+1"
 
-                class="mt-1 block rounded-md border-gray-300 py-2 pl-3 pr-3 bg-none text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
-          <option v-for="player in squad.players" :key="player.steamId"
-                  @dragstart="dragPlayerFrom($event, player, squad.name)"
-                  :value="player.steamId" draggable="true">
-            {{ player.name }}
-          </option>
-        </select>
-      </div>
-
-      <form class="squad-block">
-        <label for="email" class="block text-sm font-medium text-gray-700">Name</label>
-        <div class="mt-1">
-          <input
-              v-model="name" required
-              type="email" name="email" id="email"
-              class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              placeholder="The Circle"/>
+                  class="mt-1 block rounded-md border-gray-300 py-2 pl-3 pr-3 bg-none text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
+            <option v-for="player in squad.players" :key="player.steamId"
+                    @dragstart="dragPlayerFrom($event, player, squad.name)"
+                    :value="player.steamId" draggable="true">
+              {{ player.name }}
+            </option>
+          </select>
         </div>
-        <button type="submit"
-                @click="addSquad"
-                class="items-center rounded border border-transparent bg-indigo-100 px-2.5 py-1.5 text-xs font-medium text-indigo-700 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-          Add squad
-        </button>
-      </form>
+
+        <form class="squad-block">
+          <label for="email" class="block text-sm font-medium text-gray-700">Name</label>
+          <div class="mt-1">
+            <input
+                v-model="name" required
+                type="email" name="email" id="email"
+                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                placeholder="The Circle"/>
+          </div>
+          <button type="submit"
+                  @click="addSquad"
+                  class="items-center rounded border border-transparent bg-indigo-100 px-2.5 py-1.5 text-xs font-medium text-indigo-700 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+            Add squad
+          </button>
+        </form>
+      </div>
     </div>
     <button
         v-if="changesMade"
@@ -76,16 +80,16 @@
     </button>
 
     <h2 class="mb-4 mt-6">Stats</h2>
-    <div class="grid grid-cols-5 gap-2.5">
+    <div class="columns-3 gap-2.5">
       <div
           v-for="(squad, index) in data.game.squads" :key="index"
           class="squad-block"
       >
         <label class="block text-sm font-medium text-gray-700">{{ squad.name }}</label>
-        <table class="min-w-full divide-y divide-gray-300">
+        <table class="w-full table-fixed divide-y divide-gray-300">
           <thead class="">
           <tr>
-            <th scope="col" class="pr-2 text-left text-sm font-semibold text-gray-900">Name</th>
+            <th scope="col" class="w-3/6 pr-2 text-left text-sm font-semibold text-gray-900">Name</th>
             <th scope="col" class="px-2 py-3.5 text-center text-sm font-semibold text-gray-900">K</th>
             <th scope="col" class="px-2 text-center text-sm font-semibold text-gray-900">D</th>
             <th scope="col" class="px-1 text-center text-sm font-semibold text-gray-900">K/D</th>
@@ -278,6 +282,6 @@ function saveSquads() {
 
 <style scoped>
 .squad-block {
-  @apply flex flex-col gap-2.5 justify-center shadow rounded-md py-2 px-4 h-fit;
+  @apply flex flex-col gap-2.5 justify-center shadow rounded-md py-2 px-4 h-fit bg-white mb-2.5 break-inside-avoid-column;
 }
 </style>
